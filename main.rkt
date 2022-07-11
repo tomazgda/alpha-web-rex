@@ -40,8 +40,8 @@
   (set! counter (add1 counter))         ; increment the value of counter by 1
   ;; return some http content
   (http-response "
-<h1>control-o-rex!</h1> \n
-<p><the t-rex 'walks' everytime this page is refreshed</p>"))
+<h1>control-o-rex!</h1>\n
+<p>the t-rex 'walks' everytime this page is refreshed</p>"))
 
 (define-values (dispatch generate-url)
   (dispatch-rules
