@@ -21,37 +21,33 @@
     (list
      (string->bytes/utf-8 content))))
 
-;; rex-o-controller content
-(define (first-page request)
+;;; we need two pages - one the viewer; one the controller
+
+;; the viewer
+(define (viewer-page request)
+  ;; return some http content
   (http-response
-(string-append
-   "
-<h1>This is the first page!</h1> \n
-<p>There is some text here also</p>"
-   (~r counter #:precision '(= 2))      ; Number to String
-   )))
-                        
-;; rex-o-controlled content
-(define (second-page request)
+   (string-append
+    "
+<h1>rex-o-controlled</h1>\n
+<p>the t-rex has walked...</p>"
+    (~r counter #:precision '(= 2))      ; Number to String
+    " meteres"
+    )))
+
+;; the controller                        
+(define (controller-page request)
+  (set! counter (add1 counter))         ; increment the value of counter by 1
+  ;; return some http content
   (http-response "
-<h1>This is the second page!</h1> \n
-<button type=\"button\">Click Me!</button>"))
-
-(define (the-thing request)
-
-  ;; (set! has-happened? (not has-happened?))
-  (set! counter (add1 counter))
-  
-  (http-response "<h1>The Thing Has Been Done!</h1>
-"))
+<h1>control-o-rex!</h1> \n
+<p><the t-rex 'walks' everytime this page is refreshed</p>"))
 
 (define-values (dispatch generate-url)
   (dispatch-rules
-  [("") first-page]   
-  [("first")
-   (if has-happened? second-page first-page)]
-  [("second") second-page]
-  [("the-thing") the-thing]
+  [("") viewer-page]   
+  [("viewer") viewer-page]
+  [("controller") controller-page]
   [else
    (error "There is no procedure to handle the url.")
    ]))
@@ -60,16 +56,11 @@
 (define (request-handler request)
   (dispatch request))
 
-;; (define (start req)
-;;   (response/xexpr
-;;    `(html (head (title "Hello world!"))
-;;           (body (p "Hey out there!")))))
-
-;; Start the server.
+;; start the server.
 (serve/servlet
  request-handler
  #:launch-browser? #f
  #:quit? #f
  #:listen-ip "127.0.0.1"
- #:port 8010
+ #:port 9010
  #:servlet-regexp #rx"")
